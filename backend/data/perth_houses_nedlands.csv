@@ -1,0 +1,15 @@
+house_id,address,suburb,price,bedrooms,bathrooms,garage,land_area,floor_area,build_year,latitude,longitude
+H01,12 Stirling Hwy,Nedlands,1250000,4,2,2,650,280,1998,-31.9821,115.7912
+H02,45 Broadway,Nedlands,980000,3,2,1,520,210,2004,-31.9798,115.7935
+H03,7 Bruce St,Nedlands,1450000,5,3,2,780,340,1985,-31.9845,115.7889
+H04,23 Vincent St,Nedlands,875000,3,1,1,480,180,1976,-31.9779,115.7960
+H05,88 Waratah Ave,Nedlands,2100000,5,4,3,950,410,2012,-31.9860,115.7945
+H06,15 Alexander Rd,Nedlands,1120000,4,2,2,610,260,1999,-31.9805,115.7900
+H07,31 Adelma Rd,Nedlands,990000,3,2,2,540,220,2001,-31.9833,115.7970
+H08,6 Doonan St,Nedlands,1340000,4,3,2,700,300,1992,-31.9788,115.7885
+H09,54 Elizabeth St,Nedlands,760000,2,1,1,410,150,1968,-31.9815,115.7925
+H10,19 Bimbimbie St,Nedlands,1580000,5,3,2,820,360,2008,-31.9850,115.7912
+H11,3 Karella Ave,Nedlands,1050000,3,2,1,560,230,1995,-31.9795,115.7948
+H12,72 Dalkeith Rd,Nedlands,1890000,4,3,3,900,380,2015,-31.9865,115.7900
+H13,28 Melvista Ave,Nedlands,920000,3,2,1,500,200,1988,-31.9772,115.7915
+H14,41 Hackett Dr,Nedlands,1670000,5,3,2,860,350,2010,-31.9840,115.7955

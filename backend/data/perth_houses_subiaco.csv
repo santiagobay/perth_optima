@@ -1,0 +1,9 @@
+house_id,address,suburb,price,bedrooms,bathrooms,garage,land_area,floor_area,build_year,latitude,longitude
+S01,16 Hay St,Subiaco,1475000,3,2,1,420,220,2005,-31.9466,115.8275
+S02,28 Rokeby Rd,Subiaco,1620000,4,2,2,510,265,2009,-31.9478,115.8291
+S03,77 Cottesloe Ave,Subiaco,1380000,3,2,1,490,205,1998,-31.9449,115.8268
+S04,9 Hamersley Rd,Subiaco,1755000,5,3,2,680,330,2012,-31.9494,115.8312
+S05,43 Stirling Hwy,Subiaco,1690000,4,3,2,610,290,2010,-31.9483,115.8286
+S06,54 Nicholson Rd,Subiaco,1520000,3,2,1,480,215,2003,-31.9457,115.8300
+S07,8 King Edward Rd,Subiaco,1800000,5,4,2,720,360,2016,-31.9508,115.8330
+S08,31 Moxon Rd,Subiaco,1585000,4,2,2,540,250,2007,-31.9471,115.8256

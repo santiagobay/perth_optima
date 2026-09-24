@@ -1,0 +1,45 @@
+======================================================================
+PIPELINE DE OPTIMIZACIÓN DE RUTA — Perth House Prices
+Suburbio seleccionado: Nedlands
+======================================================================
+
+[Paso 1] Viviendas cargadas para 'Nedlands': 14
+   H01  12 Stirling Hwy      (lat=-31.9821, lon=115.7912)  $1,250,000
+   H02  45 Broadway          (lat=-31.9798, lon=115.7935)  $980,000
+   H03  7 Bruce St           (lat=-31.9845, lon=115.7889)  $1,450,000
+   H04  23 Vincent St        (lat=-31.9779, lon=115.7960)  $875,000
+   H05  88 Waratah Ave       (lat=-31.9860, lon=115.7945)  $2,100,000
+   H06  15 Alexander Rd      (lat=-31.9805, lon=115.7900)  $1,120,000
+   H07  31 Adelma Rd         (lat=-31.9833, lon=115.7970)  $990,000
+   H08  6 Doonan St          (lat=-31.9788, lon=115.7885)  $1,340,000
+   H09  54 Elizabeth St      (lat=-31.9815, lon=115.7925)  $760,000
+   H10  19 Bimbimbie St      (lat=-31.9850, lon=115.7912)  $1,580,000
+   H11  3 Karella Ave        (lat=-31.9795, lon=115.7948)  $1,050,000
+   H12  72 Dalkeith Rd       (lat=-31.9865, lon=115.7900)  $1,890,000
+   H13  28 Melvista Ave      (lat=-31.9772, lon=115.7915)  $920,000
+   H14  41 Hackett Dr        (lat=-31.9840, lon=115.7955)  $1,670,000
+
+[Paso 2] Matriz de distancias 14x14 calculada en 0.019 s
+          Distancia máxima entre dos viviendas: 1.109 km
+          Guardada en: /home/claude/project/backend/outputs/distance_matrix.csv
+
+[Paso 3] Modelo exacto (MTZ) resuelto sobre 9 viviendas en 0.161 s
+          Estado del solver: optimal
+          Distancia óptima: 3.289 km
+          Ruta óptima: H01 -> H06 -> H08 -> H03 -> H05 -> H07 -> H04 -> H02 -> H09 -> H01
+
+[Paso 4] Heurística NN + 2-opt resuelta sobre 14 viviendas en 0.001 s
+          Distancia ruta inicial (vecino más cercano): 3.968 km
+          Distancia ruta mejorada (2-opt): 3.891 km
+          Tiempo estimado de recorrido (con buffers): 217.8 min
+          Ruta heurística: H01 -> H09 -> H02 -> H11 -> H04 -> H13 -> H08 -> H06 -> H03 -> H12 -> H10 -> H05 -> H14 -> H07 -> H01
+
+[Paso 5] Validación sobre el mismo subconjunto de 9 viviendas:
+          Óptimo exacto (MTZ):        3.289 km
+          Heurística (NN + 2-opt):    3.289 km
+          Brecha de optimalidad:      0.00 %
+
+[Paso 6] Resultados completos guardados en: /home/claude/project/backend/outputs/route_result.json
+======================================================================
+EJECUCIÓN FINALIZADA CORRECTAMENTE
+======================================================================
