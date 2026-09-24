@@ -302,6 +302,18 @@ select {
   color: var(--muted);
 }
 
+.stats-panel__note p {
+  margin: 0 0 8px;
+}
+
+.stats-panel__note p:last-child {
+  margin-bottom: 0;
+}
+
+.stats-panel__note strong {
+  color: var(--text);
+}
+
 .app__body {
   display: grid;
   grid-template-columns: 1.5fr 1fr;
@@ -315,6 +327,13 @@ select {
   border-radius: 18px;
   border: 1px solid var(--border);
   box-shadow: 0 10px 24px rgba(18, 48, 39, 0.06);
+  /* Leaflet apila sus paneles en z-index 400 y sus controles en 1000. Sin un
+     contexto de apilamiento propio, esos valores compiten con el resto de la
+     página y el mapa se dibujaba por encima del modal de ayuda. Con
+     `position: relative` + `z-index: 0` todo lo que hay dentro del mapa queda
+     confinado por debajo de cualquier capa superior. */
+  position: relative;
+  z-index: 0;
 }
 
 .map-placeholder {
@@ -335,7 +354,7 @@ select {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 50;
+  z-index: 1100; /* por encima de los controles de Leaflet (1000) */
   padding: 20px;
 }
 
