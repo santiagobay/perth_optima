@@ -5,9 +5,11 @@ pandas>=2.2,<3.0
 pyomo==6.10.1
 numpy>=1.26
 python-dotenv>=1.0,<2.0
+gunicorn>=23.0,<24.0
 
 # Además del entorno de Python, este proyecto requiere un solver de
 # programación entera compatible con Pyomo, instalado a nivel de sistema
 # operativo (no vía pip):
 #   Ubuntu/Debian:  sudo apt-get install coinor-cbc
 #   macOS (brew):   brew install cbc
+#   Windows:        winget install --id COIN-OR.CBC -e

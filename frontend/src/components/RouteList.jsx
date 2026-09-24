@@ -1,3 +1,5 @@
+import { formatNumber, formatPrice } from "../format";
+
 export default function RouteList({ route }) {
   if (!route || route.length === 0) return null;
 
@@ -9,8 +11,8 @@ export default function RouteList({ route }) {
           <div className="route-list__info">
             <p className="route-list__address">{house.address}</p>
             <p className="route-list__meta">
-              {house.house_id} · {house.bedrooms} hab · {house.bathrooms} baños · $
-              {house.price.toLocaleString("en-AU")}
+              {house.house_id} · {formatNumber(house.bedrooms)} hab ·{" "}
+              {formatNumber(house.bathrooms)} baños · {formatPrice(house.price)}
             </p>
           </div>
         </li>

@@ -72,7 +72,17 @@ Se usa una formulación de programación entera para obtener la solución óptim
 
 La heurística primero construye una ruta factible partiendo desde una vivienda inicial y eligiendo cada vez la casa no visitada más cercana. Luego aplica la mejora local 2-opt para invertir tramos de la ruta si eso reduce la distancia total.
 
+El vecino más cercano es muy sensible al punto de partida, así que se repite la construcción desde varios arranques repartidos por el distrito, se mejora cada uno con 2-opt y se conserva el mejor recorrido; el tour resultante se rota para que la ruta que ve el usuario siga empezando y terminando en la misma vivienda (rotar un ciclo no cambia su longitud).
+
 No garantiza optimalidad global, pero ofrece soluciones muy buenas en tiempos bajos y es apropiada para distritos con muchas propiedades.
+
+### Notas de rendimiento
+
+Tres decisiones mantienen la API utilizable sobre el dataset completo de Perth (~33.600 viviendas, 321 distritos, hasta 231 viviendas en el más grande):
+
+- **Dataset memoizado**: los CSV se leen y normalizan una sola vez; la caché se invalida sola si cambia la fecha o el tamaño de algún archivo.
+- **Matriz de distancias simétrica y memoizada**: `d(i,j) = d(j,i)`, así que solo se calcula el triángulo superior (la mitad de llamadas a geopy) y el resultado se reutiliza entre peticiones del mismo distrito.
+- **2-opt con evaluación incremental**: cada intercambio se valora con los cuatro arcos que cambian en lugar de recalcular la ruta completa, lo que baja cada pasada de O(n³) a O(n²).
 
 ## Stack tecnológico
 
@@ -108,6 +118,11 @@ project_perth_ruta_optima/
 │   │   ├── distances.py
 │   │   ├── exact_solver.py
 │   │   └── heuristic_solver.py
+│   ├── tests/
+│   │   ├── test_exact_solver.py
+│   │   ├── test_exact_subset_mode.py
+│   │   ├── test_heuristic_solver.py
+│   │   └── test_real_dataset_columns.py
 │   └── outputs/
 │       ├── distance_matrix.csv
 │       ├── execution_log.txt
@@ -120,6 +135,7 @@ project_perth_ruta_optima/
 │   └── src/
 │       ├── api.js
 │       ├── App.jsx
+│       ├── format.js
 │       ├── main.jsx
 │       ├── index.css
 │       ├── styles.css
@@ -199,16 +215,33 @@ La interfaz queda en:
 ### Validar backend
 
 ```powershell
+curl http://127.0.0.1:5000/api/health
 curl http://127.0.0.1:5000/api/suburbs
 ```
 
-Debe devolver JSON con la lista de suburbios disponibles.
+`/api/health` responde `{"status": "ok", ...}` y `/api/suburbs` devuelve la lista de
+distritos disponibles junto con cuántas viviendas aporta cada uno:
+
+```json
+{
+  "suburbs": ["Alexander Heights", "..."],
+  "details": [{ "name": "Alexander Heights", "n_houses": 96 }]
+}
+```
 
 ### Validar ruta
 
 ```powershell
 curl "http://127.0.0.1:5000/api/route?suburb=Claremont&mode=heuristic"
 ```
+
+Errores previstos de la API (siempre en JSON, nunca como traza HTML):
+
+| Situación | Código | Cuerpo |
+|---|---|---|
+| Suburbio inexistente o sin coordenadas | 404 | `{"error": "No se encontraron viviendas para el suburbio '...'."}` |
+| `mode` distinto de `heuristic`/`exact` | 400 | `{"error": "Modo de solución no válido: '...'"}` |
+| CBC no instalado y `mode=exact` | 503 | `{"error": "No se encontró el ejecutable CBC..."}` |
 
 ### Validar exactamente el modelo exacto sobre un subconjunto pequeño
 
@@ -218,6 +251,18 @@ Se puede ejecutar el script:
 cd backend
 python run_demo.py
 ```
+
+Genera `outputs/route_result.json` y `outputs/execution_log.txt`.
+
+### Pruebas automatizadas
+
+```powershell
+cd backend
+python -m unittest discover -s tests -t .
+```
+
+Las pruebas del modelo exacto se omiten automáticamente (`skip`) si CBC no está
+instalado, de modo que la suite pasa entera tanto con solver como sin él.
 
 ## Evidencia de ejecución real
 
@@ -254,6 +299,7 @@ Esto demuestra que:
 4. Seleccionar la carpeta `frontend` como directorio raíz.
 5. Build command: `npm install && npm run build`
 6. Output directory: `dist`
+7. Variable de entorno: `VITE_API_BASE=https://<tu-api>.onrender.com`
 
 ### Backend en Render / Railway / PythonAnywhere
 
@@ -266,6 +312,28 @@ Se recomienda:
 - PythonAnywhere
 
 Para este caso, la parte visual se despliega en Vercel y la API en una plataforma con soporte para Python.
+
+El `Dockerfile` del backend instala CBC y arranca la API con **gunicorn**:
+
+```bash
+gunicorn -w 2 -t 120 -b 0.0.0.0:$PORT app:app
+```
+
+El servidor de desarrollo de Flask (`python app.py`) es solo para trabajar en local.
+Su modo debug expone la consola interactiva de Werkzeug, que permite ejecutar código
+arbitrario en el servidor; por eso viene apagado por defecto y solo se activa con
+`FLASK_DEBUG=1`.
+
+### Variables de entorno del backend
+
+| Variable | Por defecto | Para qué sirve |
+|---|---|---|
+| `DATA_DIR` | `./data` | Carpeta de CSVs que se cargan y concatenan. |
+| `DATA_SOURCE_URL` | — | CSV remoto opcional que se añade al dataset local. |
+| `MAX_EXACT_HOUSES` | `15` | Tamaño máximo de la instancia del modelo exacto. |
+| `CORS_ORIGINS` | `*` | Orígenes permitidos; en producción, el dominio del frontend. |
+| `FLASK_DEBUG` | `0` | Modo debug del servidor de desarrollo. Nunca activarlo en producción. |
+| `PORT` | `5000` | Puerto de escucha. |
 
 ## GitHub y publicación
 
