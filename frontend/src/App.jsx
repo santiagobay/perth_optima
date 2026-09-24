@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { fetchSuburbs, fetchRoute } from "./api";
 import ControlPanel from "./components/ControlPanel";
 import HelpModal from "./components/HelpModal";
@@ -7,6 +7,24 @@ import RouteList from "./components/RouteList";
 import StatsPanel from "./components/StatsPanel";
 import "./styles.css";
 
+const HELP_SEEN_KEY = "perth-optima:help-seen";
+
+function readHelpSeen() {
+  try {
+    return localStorage.getItem(HELP_SEEN_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function writeHelpSeen() {
+  try {
+    localStorage.setItem(HELP_SEEN_KEY, "1");
+  } catch {
+    /* almacenamiento no disponible: la ayuda volverá a abrirse, sin más */
+  }
+}
+
 export default function App() {
   const [suburbs, setSuburbs] = useState([]);
   const [suburb, setSuburb] = useState("");
@@ -14,29 +32,47 @@ export default function App() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [helpOpen, setHelpOpen] = useState(true);
+  // La ayuda se abre la primera vez y no vuelve a molestar en visitas
+  // siguientes (el usuario puede reabrirla desde el panel de control).
+  // El acceso va protegido porque localStorage lanza excepción en algunos
+  // modos privados del navegador.
+  const [helpOpen, setHelpOpen] = useState(() => readHelpSeen() !== "1");
+
+  // Evita que la respuesta de un cálculo anterior pise a la del último
+  // clic si el usuario cambia de distrito mientras uno está en curso.
+  const requestId = useRef(0);
 
   useEffect(() => {
     fetchSuburbs()
       .then((list) => {
         setSuburbs(list);
-        if (list.length > 0) setSuburb(list[0]);
+        if (list.length === 0) return;
+        const preferred = list.find((s) => s.name === "Nedlands") ?? list[0];
+        setSuburb(preferred.name);
       })
       .catch((e) => setError(e.message));
   }, []);
 
+  function closeHelp() {
+    writeHelpSeen();
+    setHelpOpen(false);
+  }
+
   async function handleCalculate() {
     if (!suburb) return;
+    const currentRequest = ++requestId.current;
     setLoading(true);
     setError(null);
     try {
       const data = await fetchRoute(suburb, mode);
+      if (currentRequest !== requestId.current) return;
       setResult(data);
     } catch (e) {
+      if (currentRequest !== requestId.current) return;
       setError(e.message);
       setResult(null);
     } finally {
-      setLoading(false);
+      if (currentRequest === requestId.current) setLoading(false);
     }
   }
 
@@ -78,7 +114,7 @@ export default function App() {
         onOpenHelp={() => setHelpOpen(true)}
       />
 
-      <HelpModal isOpen={helpOpen} onClose={() => setHelpOpen(false)} />
+      <HelpModal isOpen={helpOpen} onClose={closeHelp} />
 
       {error && <p className="app__error">{error}</p>}
 
