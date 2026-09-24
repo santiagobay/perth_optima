@@ -43,13 +43,28 @@ export default function App() {
   return (
     <div className="app">
       <header className="app__header">
-        <p className="app__eyebrow">Perth House Prices · Modelamiento y Optimización</p>
-        <h1>Ruta óptima de visita a propiedades</h1>
-        <p className="app__subtitle">
-          Calcula, para un distrito de Perth, el orden de visita que minimiza la distancia
-          total recorrida entre viviendas, comparando un modelo exacto de asignación con
-          eliminación de subtours (MTZ) y una heurística de vecino más cercano con mejora 2-opt.
-        </p>
+        <div className="app__hero">
+          <div className="app__brand">
+            <span className="app__brand-mark">P</span>
+            <div>
+              <p className="app__eyebrow">Perth Optima</p>
+              <strong>Optimización de rutas urbanas</strong>
+            </div>
+          </div>
+
+          <div className="app__chip-row">
+            <span>Exact MTZ</span>
+            <span>Heurística 2-opt</span>
+            <span>Geo data</span>
+          </div>
+
+          <h1>Ruta óptima de visita a propiedades en Perth</h1>
+          <p className="app__subtitle">
+            Compara modelos de optimización para minimizar la distancia total recorrida,
+            visualizar el recorrido y entender cómo cada método resuelve un problema de
+            rutas con restricciones reales.
+          </p>
+        </div>
       </header>
 
       <ControlPanel
